@@ -145,6 +145,27 @@ class HBaseManager(fixtures.Fixture):
         )
 
 
+class CassandraManager(fixtures.Fixture):
+    def __init__(self, url):
+        self._url = url
+
+    def setUp(self):
+        super(CassandraManager, self).setUp()
+        self.connection = storage.get_connection(
+            self.url, 'ceilometer.metering.storage')
+        self.alarm_connection = storage.get_connection(
+            self.url, 'ceilometer.alarm.storage')
+        self.event_connection = storage.get_connection(
+            self.url, 'ceilometer.event.storage')
+
+    @property
+    def url(self):
+        return '%s?keyspace_prefix=%s' % (
+            self._url,
+            'test_' + uuid.uuid4().hex
+        )
+
+
 class SQLiteManager(fixtures.Fixture):
 
     def __init__(self, url):
@@ -169,6 +190,7 @@ class TestBase(testscenarios.testcase.WithScenarios, test_base.BaseTestCase):
         'db2': MongoDbManager,
         'sqlite': SQLiteManager,
         'hbase': HBaseManager,
+        'cassandra': CassandraManager,
     }
 
     db_url = 'sqlite://'  # NOTE(Alexei_987) Set default db url
@@ -259,13 +281,18 @@ class MixinTestsWithBackendScenarios(object):
         ('sqlite', {'db_url': 'sqlite://'}),
     ]
 
-    for db in ('MONGODB', 'MYSQL', 'PGSQL', 'HBASE', 'DB2'):
+    for db in ('MONGODB', 'MYSQL', 'PGSQL', 'HBASE', 'DB2', 'CASSANDRA'):
         if os.environ.get('CEILOMETER_TEST_%s_URL' % db):
             scenarios.append(
                 (db.lower(), {'db_url': os.environ.get(
                     'CEILOMETER_TEST_%s_URL' % db)}))
 
     scenarios_db = [db for db, _ in scenarios]
+
+    # Insert default value for cassandra test
+    if 'cassandra' not in scenarios_db:
+        scenarios.append(
+            ('cassandra', {'db_url': 'cassandra://__test__'}))
 
     # Insert default value for hbase test
     if 'hbase' not in scenarios_db:

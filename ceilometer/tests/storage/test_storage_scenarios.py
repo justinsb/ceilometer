@@ -135,10 +135,10 @@ class ResourceTest(DBTestBase,
         for resource in resources:
             if resource.resource_id != 'resource-id':
                 continue
-            self.assertEqual(resource.first_sample_timestamp,
-                             expected_first_sample_timestamp)
-            self.assertEqual(resource.last_sample_timestamp,
-                             expected_last_sample_timestamp)
+            first_ts = resource.first_sample_timestamp
+            self.assertEqual(first_ts, expected_first_sample_timestamp)
+            last_ts = resource.last_sample_timestamp
+            self.assertEqual(last_ts, expected_last_sample_timestamp)
             self.assertEqual(resource.resource_id, 'resource-id')
             self.assertEqual(resource.project_id, 'project-id')
             self.assertIn(resource.source, msgs_sources)
@@ -408,7 +408,7 @@ class MeterTest(DBTestBase,
 class MeterTestPagination(DBTestBase,
                           tests_db.MixinTestsWithBackendScenarios):
 
-    def tet_get_meters_all_limit(self):
+    def test_get_meters_all_limit(self):
         pagination = base.Pagination(limit=8)
         results = list(self.conn.get_meters(pagination=pagination))
         self.assertEqual(len(results), 8)

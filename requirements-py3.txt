@@ -5,6 +5,7 @@
 alembic>=0.6.4
 anyjson>=0.3.3
 argparse
+cassandra-driver>=2.1.1
 croniter>=0.3.4 # MIT License
 eventlet>=0.15.2
 iso8601>=0.1.9

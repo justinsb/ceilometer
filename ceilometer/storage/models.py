@@ -72,6 +72,22 @@ class Meter(base.Model):
                             user_id=user_id,
                             )
 
+    def __repr__(self):
+        return ("<Meter(name: %s,"
+                " type: %s,"
+                " unit: %s,"
+                " resource_id: %s,"
+                " project_id: %s,"
+                " source: %s,"
+                " user_id: %s)>" %
+                (self.name,
+                 self.type,
+                 self.unit,
+                 self.resource_id,
+                 self.project_id,
+                 self.source,
+                 self.user_id))
+
 
 class Sample(base.Model):
     """One collected data point."""

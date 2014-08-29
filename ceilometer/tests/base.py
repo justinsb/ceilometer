@@ -32,6 +32,8 @@ import webtest
 import ceilometer
 from ceilometer import messaging
 
+eventlet.monkey_patch(socket=True, select=True, thread=True)
+
 
 class BaseTestCase(base.BaseTestCase):
     def setup_messaging(self, conf, exchange=None):
